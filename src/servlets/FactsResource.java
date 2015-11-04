@@ -16,62 +16,78 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import model.Fact;
 import clients.wit.WitClient;
 import clients.wit.WitResponse;
 
 import com.google.gson.Gson;
 
+import database.Animal;
+import database.Fact;
+import exceptions.NotFoundException;
 import exceptions.NotImplementedException;
 import exceptions.WitException;
 
 @Path("/facts")
 public class FactsResource {
 	@Context AnimaliaServletContext context;
-//	@GET
-//	@Path("{id}")
-//	@Produces(MediaType.TEXT_HTML)
-//	public String getFact(@PathParam("id") String id) {
-//
-//		return "<html> " + "<title>" + "fact number " + id  + "</title>"
-//				+ "<body><h1>" + "fact number " + id + "</body></h1>" + "</html> ";
-//	}
-	
-// TODO: look at this https://github.com/DominikAngerer/Boostraped-Jersey-RestAPI to 
+	//	@GET
+	//	@Path("{id}")
+	//	@Produces(MediaType.TEXT_HTML)
+	//	public String getFact(@PathParam("id") String id) {
+	//
+	//		return "<html> " + "<title>" + "fact number " + id  + "</title>"
+	//				+ "<body><h1>" + "fact number " + id + "</body></h1>" + "</html> ";
+	//	}
+
+	// TODO: look at this https://github.com/DominikAngerer/Boostraped-Jersey-RestAPI to 
 	// use gson request/response deserializer automatically (native is jackson)
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFactJson(@PathParam("id") String id) {
-		Gson gson = new Gson();
-		return Response.status(200).entity(gson.toJson(new AnimaliaResponse.Builder().withId("fake_id").withFact("fake_fact").build())).build();
+		try {
+			Fact fact = context.psqlClient.getFact(id);
+			if (fact == null) {
+				return Response.status(404).build();
+			}
+			return Response.status(200).entity(context.gson.toJson(
+					new AnimaliaResponse.Builder().withId(fact.getGuid().toString()).withFact(fact.getFact()).build())).build();
+		} catch (SQLException e) {
+			return Response.status(404).build();
+		}
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response postFact(String postFactRequestString) {
-		Gson gson = new Gson();
-		PostFactRequest postFactRequest = gson.fromJson(postFactRequestString, PostFactRequest.class);
+		PostFactRequest postFactRequest = context.gson.fromJson(postFactRequestString, PostFactRequest.class);
 		WitClient wit = context.witClient;
-		System.out.println(gson.toJson(postFactRequest));
-			try {
-				WitResponse witResponse = wit.sendMessage(postFactRequest.getFact());
-				String factId = context.psqlClient.store(URLDecoder.decode(witResponse.get_text()));
-				return Response.status(200).entity(gson.toJson(new AnimaliaResponse.Builder().withId(factId).build())).build();
-			} catch (WitException | SQLException  e) {
-				return Response.status(400).entity(gson.toJson(new AnimaliaResponse.Builder().withMessage(e.getMessage()).build())).build();
-			} catch (Exception e) {
-				// TODO: if the API is public, we should avoid having the exception message in message
-				return Response.status(400).entity(gson.toJson(new AnimaliaResponse.Builder().withMessage(e.getMessage()).build())).build();
-			}
+		System.out.println(context.gson.toJson(postFactRequest));
+		try {
+			WitResponse witResponse = wit.sendMessage(postFactRequest.getFact());
+			String factId = context.psqlClient.addFact(witResponse);
+			return Response.status(200).entity(context.gson.toJson(new AnimaliaResponse.Builder().withId(factId).build())).build();
+		} catch (WitException | SQLException  e) {
+			return Response.status(400).entity(context.gson.toJson(new AnimaliaResponse.Builder().withMessage("Failed to parse your fact").build())).build();
+		} catch (Exception e) {
+			// TODO: add logger
+			return Response.status(400).entity(context.gson.toJson(new AnimaliaResponse.Builder().withMessage("Failed to parse your fact").build())).build();
+		}
 
 	}
-	
+
 	@DELETE
 	@Path("{id}")
 	public Response deleteFact(@PathParam("id") String id) {
-		Gson gson = new Gson();
-		return Response.status(200).entity(gson.toJson(new AnimaliaResponse.Builder().withId("fake_id").build())).build();
+		Fact fact;
+		try {
+			fact = context.psqlClient.getFact(id);
+			WitResponse witResponse = context.witClient.sendMessage(fact.getFact());
+			context.psqlClient.deleteFact(witResponse);
+			return Response.status(200).entity(context.gson.toJson(new AnimaliaResponse.Builder().withId(id).build())).build();
+		} catch (SQLException | WitException | NotImplementedException | NotFoundException e) {
+			return Response.status(404).build();
+		} 
 	}
 }

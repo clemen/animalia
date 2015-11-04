@@ -6,15 +6,18 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import clients.database.PsqlClient;
+import com.google.gson.Gson;
+
+import clients.database.FactProcessor;
 import clients.wit.WitClient;
 
 @WebListener
 public class AnimaliaServletContext implements ServletContextListener {
 	public static WitClient witClient;
 	public static DatabaseConfig dbConfig;
-	public static PsqlClient psqlClient;
+	public static FactProcessor psqlClient;
 	public static DefaultHttpClient httpClient;
+	public static Gson gson = new Gson();
 	
 	public void contextInitialized(ServletContextEvent servletContextEvent) 
 	{
@@ -28,7 +31,7 @@ public class AnimaliaServletContext implements ServletContextListener {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to setup the database connection " + e.getMessage());
 		}
-		psqlClient = new PsqlClient(dbConfig);
+		psqlClient = new FactProcessor(dbConfig);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ public class Entities {
 	private final List<Entity> scales;
 	private final List<Entity> species;
 	private final List<Entity> number;
+	private final List<Entity> negation;
 
 	private Entities (Builder builder) {
 		this.relationship =  builder.relationship;
@@ -23,6 +24,7 @@ public class Entities {
 		this.scales = builder.scales;
 		this.species = builder.species;
 		this.number = builder.number;
+		this.negation = builder.negation;
 	}
 
 	public String toString() {
@@ -54,6 +56,9 @@ public class Entities {
 		if (number != null) {
 			stringBuilder.append("number: " + number + ",");
 		}
+		if (negation != null) {
+			stringBuilder.append("negation: " + negation + ",");
+		}
 		return stringBuilder.toString();
 	}
 
@@ -67,6 +72,12 @@ public class Entities {
 		private List<Entity> scales;
 		private List<Entity> species;
 		private List<Entity> number;
+		private List<Entity> negation;
+
+		public Builder withNegation(List<Entity> negation) {
+			this.negation = negation;
+			return this;
+		}
 
 		public Builder withRelationship(List<Entity> relationship) {
 			this.relationship = relationship;
@@ -154,5 +165,10 @@ public class Entities {
 		return number;
 	}
 
+	public List<Entity> getNegation() {
+		return negation;
+	}
 
+
+	
 }

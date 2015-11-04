@@ -7,11 +7,11 @@ import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName="facts")
 public class Fact {
-	private final String GUID = "guid";
-	private final String FACT = "fact";
+	public static final String GUID = "guid";
+	public static final String FACT = "fact";
 	
-	@DatabaseField(columnName = GUID, canBeNull = false, unique = true)
-	private String guid;
+	@DatabaseField(columnName = GUID, canBeNull = false, unique = true, generatedId = true)
+	private UUID guid;
 
 	@DatabaseField(columnName = FACT, canBeNull = false, unique = true)
 	private String fact;
@@ -22,7 +22,6 @@ public class Fact {
 	
 	public Fact(String fact) {
 		this.fact = fact;
-		this.guid = UUID.randomUUID().toString();
 	}
 	
 	@Override
@@ -35,7 +34,7 @@ public class Fact {
 		return guid == ((Fact)other).getGuid();
 	}
 
-	public String getGuid() {
+	public UUID getGuid() {
 		return guid;
 	}
 

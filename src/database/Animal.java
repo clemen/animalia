@@ -1,5 +1,7 @@
 package database;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "animals")
@@ -21,6 +23,12 @@ public class Animal {
 	private String species;
 	@DatabaseField(columnName = LEG_COUNT, canBeNull = true)
 	private Integer legCount;
+	@ForeignCollectionField(eager = false)
+    private ForeignCollection<Place> places;
+	@ForeignCollectionField(eager = false)
+    private ForeignCollection<Food> foods;
+	@ForeignCollectionField(eager = false)
+    private ForeignCollection<BodyPart> bodyParts;
 	
 	Animal() {
 	}
@@ -54,6 +62,18 @@ public class Animal {
 		return legCount;
 	}
 	
+	public ForeignCollection<Place> getPlaces() {
+		return places;
+	}
+
+	public ForeignCollection<Food> getFoods() {
+		return foods;
+	}
+
+	public ForeignCollection<BodyPart> getBodyParts() {
+		return bodyParts;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 31 + animalId.hashCode();
@@ -61,6 +81,9 @@ public class Animal {
 		hash = (coat == null ? hash : 31 * hash + coat.hashCode());
 		hash = (species == null ? hash : 31 * hash + species.hashCode());
 		hash = (legCount == null ? hash : 31 * hash + legCount.hashCode());
+		hash = (places == null ? hash : 31 * hash + places.hashCode()); 
+		hash = (foods == null ? hash : 31 * hash + foods.hashCode()); 
+		hash = (bodyParts == null ? hash : 31 * hash + bodyParts.hashCode()); 
 		return hash;
 	}
 
@@ -81,7 +104,24 @@ public class Animal {
 		if ((legCount == null && ((Animal)other).getLegCount() != null) || legCount != null && ((Animal)other).getLegCount() != legCount) {
 			return false;
 		}
+		if ((places == null && ((Animal)other).getPlaces() != null) || places != null && ((Animal)other).getPlaces() != places) {
+			return false;
+		}
+		if ((foods == null && ((Animal)other).getFoods() != null) || foods != null && ((Animal)other).getFoods() != foods) {
+			return false;
+		}
+		if ((bodyParts == null && ((Animal)other).getBodyParts() != null) || bodyParts != null && ((Animal)other).getBodyParts() != bodyParts) {
+			return false;
+		}
 		return true;
+	}
+	
+	public boolean isEmpty() {
+		if (coat == null && legCount == null && species == null && (places == null || places.isEmpty()) 
+				&& (foods == null || foods.isEmpty()) && (bodyParts == null || bodyParts.isEmpty())) {
+			return true;
+		}
+		return false;
 	}
 
 } 

@@ -1,6 +1,8 @@
 package servlets;
 
 
+import java.util.UUID;
+
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
@@ -23,7 +25,7 @@ public class DatabaseConfig {
 	private Dao<BodyPart, Integer> bodyPartDao;
 	private Dao<Food, Integer> foodDao;
 	private Dao<Place, Integer> placeDao;
-	private Dao<Fact, Integer> factDao;
+	private Dao<Fact, UUID> factDao;
 
 //	public static void main(String[] args) throws Exception {
 //		new DatabaseConfig().setup();
@@ -89,7 +91,7 @@ public class DatabaseConfig {
 		return placeDao;
 	}
 
-	public Dao<Fact, Integer> getFactDao() {
+	public Dao<Fact, UUID> getFactDao() {
 		return factDao;
 	}
 
