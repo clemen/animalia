@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import model.Fact;
 import clients.wit.WitClient;
 import clients.wit.WitResponse;
 
@@ -23,7 +24,6 @@ import com.google.gson.Gson;
 
 import exceptions.NotImplementedException;
 import exceptions.WitException;
-import Model.Fact;
 
 @Path("/facts")
 public class FactsResource {
