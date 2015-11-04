@@ -1,4 +1,4 @@
-package Intents;
+package clients.wit;
 
 public class Entity {
 	private String type;

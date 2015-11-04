@@ -11,7 +11,7 @@ import com.google.gson.Gson;
 
 @Path("")
 public class Query {
-		@GET
+	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response query(@QueryParam(value = "q") final String q) {
 			Gson gson = new Gson();

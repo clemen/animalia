@@ -1,4 +1,4 @@
-package Intents;
+package clients.wit;
 
 import java.util.List;
 
@@ -38,6 +38,22 @@ public class Outcome {
 	"confidence: " + confidence + ", " + 
 				"intent: " + intent + ", " +
 	"entities: " + entities;
+	}
+
+	public String get_text() {
+		return _text;
+	}
+
+	public float getConfidence() {
+		return confidence;
+	}
+
+	public String getIntent() {
+		return intent;
+	}
+
+	public Entities getEntities() {
+		return entities;
 	}
 	
 }

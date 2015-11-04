@@ -1,8 +1,9 @@
-package Clients;
+package clients.wit;
 
 import java.util.List;
 
-import Intents.Outcome;
+import exceptions.WitException;
+
 
 public class WitResponse {
 //	{
@@ -42,6 +43,23 @@ public class WitResponse {
 				"_text: " + _text + ", " + 
 						"outcomes: " + outcomes ;
 	}
-	
+
+	public String getMsg_id() {
+		return msg_id;
+	}
+
+	public String get_text() {
+		return _text;
+	}
+
+	public List<Outcome> getOutcomes() {
+		return outcomes;
+	}
+	public Outcome getOutcome() throws WitException {
+		if (outcomes.size() != 1) {
+			throw new WitException("no outcome or more than one outcome from wit has not been implemented " + outcomes);
+		}
+		return outcomes.get(0);
+	}
 
 }
