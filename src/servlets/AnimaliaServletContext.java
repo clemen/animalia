@@ -15,7 +15,7 @@ import clients.wit.WitClient;
 public class AnimaliaServletContext implements ServletContextListener {
 	public static WitClient witClient;
 	public static DatabaseConfig dbConfig;
-	public static FactProcessor psqlClient;
+	public static FactProcessor factProcessor;
 	public static DefaultHttpClient httpClient;
 	public static Gson gson = new Gson();
 	
@@ -31,7 +31,7 @@ public class AnimaliaServletContext implements ServletContextListener {
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to setup the database connection " + e.getMessage());
 		}
-		psqlClient = new FactProcessor(dbConfig);
+		factProcessor = new FactProcessor(dbConfig);
 	}
 
 	@Override

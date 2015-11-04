@@ -36,7 +36,7 @@ public class DeleteFactProcess{
 		Outcome outcome = witResponse.getOutcome();
 		UUID factId = fact.getGuid();
 		try {
-			if (outcome.getIntent().equals(PsqlClient.ANIMAL_PLACE_FACT)) {
+			if (FactProcessor.ANIMAL_PLACE_FACT.equals(outcome.getIntent())) {
 				if (outcome.getEntities() == null) {
 					psqlClient.deleteFact(factId);
 					return factId.toString();

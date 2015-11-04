@@ -1,24 +1,25 @@
 package clients.database;
 
-import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.UUID;
 
 import servlets.DatabaseConfig;
-import clients.wit.WitResponse;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.PreparedQuery;
 
 import database.Animal;
+import database.BodyPart;
 import database.Fact;
+import database.Food;
 import database.Place;
 
 public class PsqlClient {
-	public static final String ANIMAL_PLACE_FACT = "animal_place_fact";
 	private final DatabaseConfig dbConfig;
 	private final Dao<Animal, Integer> animalDao;
 	private final Dao<Place, Integer> placeDao;
+	private final Dao<BodyPart, Integer> bodyPartDao;
+	private final Dao<Food, Integer> foodDao;
 	public final Dao<Fact, UUID> factDao;
 	
 	public PsqlClient(DatabaseConfig dbConfig) {
@@ -26,6 +27,8 @@ public class PsqlClient {
 		this.animalDao = dbConfig.getAnimalDao();
 		this.placeDao = dbConfig.getPlaceDao();
 		this.factDao = dbConfig.getFactDao();
+		this.bodyPartDao = dbConfig.getBodyPartDao();
+		this.foodDao = dbConfig.getFoodDao();
 	}
 	
 	public UUID deleteFact(UUID factId) throws SQLException {
@@ -33,11 +36,25 @@ public class PsqlClient {
 		return factId;
 	}
 
-	public UUID storeFact(String factStr) throws SQLException {
+	public class StoredFact {
+		public Boolean stored;
+		public UUID factId;
+		
+		public StoredFact(Boolean stored, UUID factId) {
+			this.stored = stored;
+			this.factId = factId;
+		}
+	}
+	
+	public StoredFact storeFact(String factStr) throws SQLException {
 		Dao<Fact, UUID> factDao = dbConfig.getFactDao();
-		Fact fact = new Fact(factStr);
-		factDao.create(fact);
-		return fact.getGuid();
+		Fact fact = getFactFromFact(factStr);
+		if (fact == null) {
+			fact = new Fact(factStr);
+			factDao.create(fact);
+			return new StoredFact(true, fact.getGuid());
+		}
+		return new StoredFact(false, fact.getGuid());
 	}
 	
 	public Animal getAnimal(String animalStr) throws SQLException {
@@ -79,7 +96,13 @@ public class PsqlClient {
 		}
 		
 	}
-
+	public Animal getOrPrepareAnimal(String animalStr) throws SQLException {
+		Animal animal = getAnimal(animalStr);
+		if (animal == null) {
+			animal = new Animal(animalStr);
+		}
+		return animal;
+	}
 	public Animal getOrSetAnimal(String animalStr) throws SQLException {
 		Animal animal = getAnimal(animalStr);
 		if (animal == null) {
@@ -102,6 +125,74 @@ public class PsqlClient {
 			placeDao.create(place);
 		}
 		return place;
+	}
+
+	public Animal getOrSetLegCount(String legCountName, Animal animal, boolean create) throws SQLException {
+		Integer legCount = Integer.parseInt(legCountName);
+		if (!legCount.equals(animal.getLegCount())) {
+			animal.setLegCount(legCount);
+			if (create) {
+				animalDao.create(animal);
+			}
+			else {
+				animalDao.update(animal);
+			}
+		}
+		return animal;
+	}
+
+	public Animal getOrSetCoat(String coat, Animal animal, boolean create) throws SQLException {
+		if (!coat.equals(animal.getCoat())) {
+			animal.setCoat(coat);
+			if (create) {
+				animalDao.create(animal);
+			}
+			else {
+				animalDao.update(animal);
+			}
+		}
+		return animal;
+	}
+
+	public Animal getOrSetSpecies(String species, Animal animal, boolean create) throws SQLException {
+		if (!species.equals(animal.getSpecies())) {
+			animal.setSpecies(species);
+			if (create) {
+				animalDao.create(animal);
+			}
+			else {
+				animalDao.update(animal);
+			}
+		}
+		return animal;
+	}
+
+	public BodyPart getOrSetBodyPart(String name, Animal animal) throws SQLException {
+		BodyPart bodyPart = getBodyPart(name, animal);
+		if (bodyPart == null) {
+			bodyPart = new BodyPart(animal, name);
+			bodyPartDao.create(bodyPart);
+		}
+		return bodyPart;		
+	}
+
+	private BodyPart getBodyPart(String name, Animal animal) throws SQLException {
+		PreparedQuery<BodyPart> query = bodyPartDao.queryBuilder().where().eq(BodyPart.NAME, name).and().eq(BodyPart.ANIMAL_ID, animal.getAnimalId()).prepare();
+		return bodyPartDao.queryForFirst(query);
+	}
+
+	public Food getOrSetFood(String name, Animal animal) throws SQLException {
+		Food food = getFood(name, animal);
+		if (food == null) {
+			food = new Food(animal, name);
+			foodDao.create(food);
+		}
+		return food;		
+	}
+
+	private Food getFood(String name, Animal animal) throws SQLException {
+		PreparedQuery<Food> query = foodDao.queryBuilder().where().eq(Food.NAME, name).and().eq(Food.ANIMAL_ID, animal.getAnimalId()).prepare();
+		return foodDao.queryForFirst(query);
 	}
 
 }

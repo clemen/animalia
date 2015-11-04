@@ -20,6 +20,13 @@ import exceptions.NotImplementedException;
 import exceptions.WitException;
 
 public class FactProcessor {
+	public static final String ANIMAL_PLACE_FACT = "animal_place_fact";
+	public static final String ANIMAL_LEG_FACT = "animal_leg_fact";
+	public static final String ANIMAL_FUR_FACT = "animal_fur_fact";
+	public static final String ANIMAL_SCALES_FACT = "animal_scales_fact";
+	public static final String ANIMAL_EAT_FACT = "animal_eat_fact";
+	public static final String ANIMAL_BODY_FACT = "animal_body_fact";
+	public static final String ANIMAL_SPECIES_FACT = "animal_species_fact";
 	private final DatabaseConfig dbConfig;
 
 	public FactProcessor(DatabaseConfig dbConfig) {

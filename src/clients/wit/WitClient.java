@@ -41,9 +41,10 @@ public class WitClient {
 
 		URI uri;
 		try {
+			String encodedMessage = URLEncoder.encode(message, "UTF-8").replaceAll("\\+", "%20").toString();
 			uri = new URIBuilder(endpoint + "message")
 			.addParameter("v", new DateTime().toString(dateFormat))
-			.addParameter("q", URLEncoder.encode(message, "UTF-8"))
+			.addParameter("q", encodedMessage)
 			.build();
 		} catch (UnsupportedEncodingException | URISyntaxException e) {
 			throw new WitException("error in wit uri", e);

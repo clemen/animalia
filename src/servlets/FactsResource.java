@@ -29,6 +29,7 @@ import exceptions.WitException;
 
 @Path("/facts")
 public class FactsResource {
+	private static final float MIN_CONFIDENCE = 0.3F;
 	@Context AnimaliaServletContext context;
 	//	@GET
 	//	@Path("{id}")
@@ -46,7 +47,7 @@ public class FactsResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getFactJson(@PathParam("id") String id) {
 		try {
-			Fact fact = context.psqlClient.getFact(id);
+			Fact fact = context.factProcessor.getFact(id);
 			if (fact == null) {
 				return Response.status(404).build();
 			}
@@ -66,7 +67,10 @@ public class FactsResource {
 		System.out.println(context.gson.toJson(postFactRequest));
 		try {
 			WitResponse witResponse = wit.sendMessage(postFactRequest.getFact());
-			String factId = context.psqlClient.addFact(witResponse);
+			if (witResponse.getOutcome().getConfidence() < MIN_CONFIDENCE) {
+				return Response.status(400).entity(context.gson.toJson(new AnimaliaResponse.Builder().withMessage("Failed to parse your fact").build())).build();
+			}
+			String factId = context.factProcessor.addFact(witResponse);
 			return Response.status(200).entity(context.gson.toJson(new AnimaliaResponse.Builder().withId(factId).build())).build();
 		} catch (WitException | SQLException  e) {
 			return Response.status(400).entity(context.gson.toJson(new AnimaliaResponse.Builder().withMessage("Failed to parse your fact").build())).build();
@@ -82,9 +86,9 @@ public class FactsResource {
 	public Response deleteFact(@PathParam("id") String id) {
 		Fact fact;
 		try {
-			fact = context.psqlClient.getFact(id);
+			fact = context.factProcessor.getFact(id);
 			WitResponse witResponse = context.witClient.sendMessage(fact.getFact());
-			context.psqlClient.deleteFact(witResponse);
+			context.factProcessor.deleteFact(witResponse);
 			return Response.status(200).entity(context.gson.toJson(new AnimaliaResponse.Builder().withId(id).build())).build();
 		} catch (SQLException | WitException | NotImplementedException | NotFoundException e) {
 			return Response.status(404).build();

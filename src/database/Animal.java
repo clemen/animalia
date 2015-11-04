@@ -74,6 +74,22 @@ public class Animal {
 		return bodyParts;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setCoat(String coat) {
+		this.coat = coat;
+	}
+
+	public void setSpecies(String species) {
+		this.species = species;
+	}
+
+	public void setLegCount(Integer legCount) {
+		this.legCount = legCount;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 31 + animalId.hashCode();

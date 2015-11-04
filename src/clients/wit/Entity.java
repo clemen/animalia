@@ -14,7 +14,7 @@ public class Entity {
 	}
 
 	public String getValue() {
-		return value;
+		return value.toLowerCase();
 	}
 
 	public String toString() {
