@@ -43,7 +43,8 @@ echo "Getting fact"
 curl -v -H "Content-Type: application/json" -X GET "http://localhost:8080/animalia/animal/facts/$id"
 # echo "deleting fact"
 # curl -v -H "Content-Type: application/json" -X DELETE "http://localhost:8080/animalia/animal/facts/$id"
-
+echo "TESTING WHICH_ANIMAL_QUERY"
+curl -v -H "Content-Type: application/json" -X GET 'http://localhost:8080/animalia/animal/?q=Which%20animals%20eat%20salmon%20and%20berries%3F'
 #if [ curl -v -H "Content-Type: application/json" -X GET "http://localhost:8080/animalia/animal/facts/$id" | grep -q "Error" ] then
 #	echo "Failed retrieving fact $id"
 #else

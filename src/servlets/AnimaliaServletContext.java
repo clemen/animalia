@@ -6,16 +6,18 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import com.google.gson.Gson;
-
 import clients.database.FactProcessor;
+import clients.database.QueryProcessor;
 import clients.wit.WitClient;
+
+import com.google.gson.Gson;
 
 @WebListener
 public class AnimaliaServletContext implements ServletContextListener {
 	public static WitClient witClient;
 	public static DatabaseConfig dbConfig;
 	public static FactProcessor factProcessor;
+	public static QueryProcessor queryProcessor;
 	public static DefaultHttpClient httpClient;
 	public static Gson gson = new Gson();
 	
@@ -32,6 +34,7 @@ public class AnimaliaServletContext implements ServletContextListener {
 			throw new RuntimeException("Failed to setup the database connection " + e.getMessage());
 		}
 		factProcessor = new FactProcessor(dbConfig);
+		queryProcessor = new QueryProcessor(dbConfig);
 	}
 
 	@Override
