@@ -49,7 +49,7 @@ public class AddFactProcess{
 
 	public UUID process(WitResponse witResponse) throws WitException, NotImplementedException, SQLException {
 		//TODO: stem the animals to make sure at least case and plurals are removed
-		PsqlClient.StoredFact storedFact = psqlClient.storeFact(URLDecoder.decode(witResponse.get_text()));
+		PsqlClient.StoredFact storedFact = psqlClient.storeFact(witResponse.get_text());
 		UUID factId = storedFact.factId;
 		if (storedFact.stored) {
 			Outcome outcome = witResponse.getOutcome();
