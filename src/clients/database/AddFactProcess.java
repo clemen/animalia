@@ -114,6 +114,9 @@ public class AddFactProcess{
 				}
 				String legCountName = legCountEntities.get(0).getValue();
 				psqlClient.getOrSetLegCount(legCountName, animal, animal.getAnimalId() == null);
+				if (Integer.parseInt(legCountName) != 0) {
+					psqlClient.getOrSetBodyPart("leg", animal);
+				}
 			}
 			else if (FactProcessor.ANIMAL_FUR_FACT.equals(outcome.getIntent())) {
 				List<Entity> furEntities = outcome.getEntities().getFur();

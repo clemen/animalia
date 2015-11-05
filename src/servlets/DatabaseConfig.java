@@ -26,10 +26,6 @@ public class DatabaseConfig {
 	private Dao<Food, Integer> foodDao;
 	private Dao<Place, Integer> placeDao;
 	private Dao<Fact, UUID> factDao;
-
-//	public static void main(String[] args) throws Exception {
-//		new DatabaseConfig().setup();
-//	}
 	
 	public void setup() throws Exception {
 		ConnectionSource connectionSource = null;
