@@ -43,8 +43,18 @@ echo "Getting fact"
 curl -v -H "Content-Type: application/json" -X GET "http://localhost:8080/animalia/animal/facts/$id"
 # echo "deleting fact"
 # curl -v -H "Content-Type: application/json" -X DELETE "http://localhost:8080/animalia/animal/facts/$id"
-echo "TESTING WHICH_ANIMAL_QUERY"
+echo "TESTING WHICH_ANIMAL_QUERY FOOD"
 curl -v -H "Content-Type: application/json" -X GET 'http://localhost:8080/animalia/animal/?q=Which%20animals%20eat%20salmon%20and%20berries%3F'
+echo "TESTING WHICH_ANIMAL_QUERY BODY_PART"
+curl -v -H "Content-Type: application/json" -X GET 'http://locallia/animal/?q=Which%20animals%20have%20a%20tail%3F'
+echo "TESTING WHICH_ANIMAL_QUERY PLACE"
+curl -v -H "Content-Type: application/json" -X GET 'http://localhostlia/animal/?q=Which%20animals%20live%20in%20the%20mountains%3F'
+echo "TESTING WHICH_ANIMAL_QUERY SPECIES"
+curl -v -H "Content-Type: application/json" -X GET 'http://localhost:8080/animalia/animal/?q=Which%20animal%20is%20a%20mammal%3F'
+echo "TESTING WHICH_ANIMAL_QUERY SCALES"
+curl -v -H "Content-Type: application/json" -X GET 'http://localhost:8080/animalia/animal/?q=Which%20animals%20have%20scales%3F'
+echo "TESTING WHICH_ANIMAL_QUERY FUR"
+curl -v -H "Content-Type: application/json" -X GET 'http://localhost:8080/animalia/animal/?q=Which%20animals%20have%20fur%3F'
 #if [ curl -v -H "Content-Type: application/json" -X GET "http://localhost:8080/animalia/animal/facts/$id" | grep -q "Error" ] then
 #	echo "Failed retrieving fact $id"
 #else
