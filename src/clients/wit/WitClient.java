@@ -3,27 +3,19 @@ package clients.wit;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.sql.SQLException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
-
-import servlets.DatabaseConfig;
-import Intents.AnimalPlaceFact;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import exceptions.NotImplementedException;
 import exceptions.WitException;
 
 public class WitClient {
@@ -63,15 +55,6 @@ public class WitClient {
 			throw new RuntimeException(" Wit call Failed : HTTP error code : "
 					+ response.getStatusLine().getStatusCode());
 		}
-
-		//	BufferedReader br = new BufferedReader(
-		//                     new InputStreamReader((response.getEntity().getContent())));
-		//
-		//	String output;
-		//	System.out.println("Output from WIT .... \n");
-		//	while ((output = br.readLine()) != null) {
-		//		System.out.println(output);
-		//	}
 
 		Gson gson = new GsonBuilder().create();
 		WitResponse resp = null;
