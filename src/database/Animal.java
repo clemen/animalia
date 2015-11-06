@@ -5,18 +5,15 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "animals")
-public class Animal {
+public class Animal extends NamedObject{
 	// TODO: set animal_id as the primary key not just an index
 	public static final String ANIMAL_ID = "animal_id";
-	public static final String NAME = "name";
 	public static final String COAT = "coat";
 	public static final String SPECIES = "species";
 	public static final String LEG_COUNT = "leg_count";
 	
 	@DatabaseField(columnName = ANIMAL_ID, generatedId = true)
 	private Integer animalId;
-	@DatabaseField(columnName = NAME, canBeNull = false, unique = true)
-	private String name;
 	@DatabaseField(columnName = COAT, canBeNull = true)
 	private String coat;
 	@DatabaseField(columnName = SPECIES, canBeNull = true)
@@ -30,24 +27,20 @@ public class Animal {
 	@ForeignCollectionField(eager = false)
     private ForeignCollection<BodyPart> bodyParts;
 	
-	Animal() {
+	public Animal() {
 	}
 	
 	public Animal(String name) {
-		this.name = name;
+		super(name);
 	}
 	
 	public Animal(Integer animalId, String name) {
+		super(name);
 		this.animalId = animalId;
-		this.name = name;
 	}
 
 	public Integer getAnimalId() {
 		return animalId;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public String getCoat() {

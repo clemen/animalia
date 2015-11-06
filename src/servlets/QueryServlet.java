@@ -14,6 +14,7 @@ import clients.wit.WitResponse;
 
 import com.google.gson.Gson;
 
+import exceptions.NotImplementedException;
 import exceptions.WitException;
 
 @Path("")
@@ -32,7 +33,7 @@ public class QueryServlet {
 			}
 			String response = context.queryProcessor.query(witResponse);			
 			return Response.status(200).entity(context.gson.toJson(new AnimaliaResponse.Builder().withFact(response).build())).build();
-		} catch (WitException | SQLException e) {
+		} catch (WitException | SQLException | NotImplementedException e) {
 			return Response.status(400).entity(context.gson.toJson(new AnimaliaResponse.Builder().withMessage("I can't answer your question.").build())).build();
 		}
 	}
