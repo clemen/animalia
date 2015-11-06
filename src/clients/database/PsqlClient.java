@@ -195,4 +195,19 @@ public class PsqlClient {
 		return foodDao.queryForFirst(query);
 	}
 
+	public void deleteBodyPart(String name, Animal animal) throws SQLException {
+		BodyPart bp = getBodyPart(name, animal);
+		bodyPartDao.delete(bp );		
+	}
+
+	public void deleteSpecies(Animal animal) throws SQLException {
+		animal.setSpecies(null);
+		animalDao.update(animal);
+	}
+
+	public void deleteCoat(Animal animal) throws SQLException {
+		animal.setCoat(null);
+		animalDao.update(animal);
+	}
+
 }

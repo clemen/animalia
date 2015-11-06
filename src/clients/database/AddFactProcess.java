@@ -1,6 +1,5 @@
 package clients.database;
 
-import java.net.URLDecoder;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -11,41 +10,16 @@ import clients.wit.Entity;
 import clients.wit.Outcome;
 import clients.wit.WitResponse;
 import database.Animal;
-import database.Fact;
 import exceptions.NotImplementedException;
 import exceptions.WitException;
 
-public class AddFactProcess{
-	private final WitResponse witResponse;
-	private final PsqlClient psqlClient;
+public class AddFactProcess extends FactProcessorHelper{
 
 	public AddFactProcess(DatabaseConfig dbConfig, WitResponse witResponse) {
-		this.psqlClient = new PsqlClient(dbConfig);
-		this.witResponse = witResponse;
+		super(dbConfig, witResponse);
 	}
 
-	private String prepare (Outcome outcome, UUID factId, List<Entity> entities) throws SQLException, WitException, NotImplementedException {
-		if (outcome.getEntities() == null) {
-			psqlClient.deleteFact(factId);
-			return null;
-		}
-		if (outcome.getEntities().getAnimal() == null || entities == null) {
-			psqlClient.deleteFact(factId);
-			throw new WitException("Wit failed to parse the fact properly: " + witResponse);
-		}
-		// the walrus lives in the sea but the wolf lives in the forest
-		// the walrus and the salmon live in the sea
-		// the walrus and the salmon live in the sea but the salmon also lives in rivers
-		// the salmon lives in sea and rivers
-		if (outcome.getEntities().getAnimal().size() > 1) {
-			psqlClient.deleteFact(factId);
-			throw new NotImplementedException("facts with several animals are not supported");
-		}
-		if (outcome.getEntities().getNegation() != null) {
-			return null;
-		}
-		return outcome.getEntities().getAnimal().get(0).getValue();
-	}
+
 
 	public UUID process(WitResponse witResponse) throws WitException, NotImplementedException, SQLException {
 		//TODO: stem the animals to make sure at least case and plurals are removed
@@ -57,7 +31,7 @@ public class AddFactProcess{
 				// TODO: add a getFieldEntities in Entities with a swtch on the enum
 				// Facts.ANIMAL_PLACE_FACT to outcome.getEntities().getPlace()
 				List<Entity> placeEntities = outcome.getEntities().getPlace();
-				String animalStr = prepare(outcome, factId, placeEntities);
+				String animalStr = validateAndGetAnimal(outcome, factId, placeEntities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -76,7 +50,7 @@ public class AddFactProcess{
 			}
 			else if (FactProcessor.ANIMAL_BODY_FACT.equals(outcome.getIntent())) {
 				List<Entity> entities = outcome.getEntities().getBodyPart();
-				String animalStr = prepare(outcome, factId, entities);
+				String animalStr = validateAndGetAnimal(outcome, factId, entities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -90,7 +64,7 @@ public class AddFactProcess{
 
 			else if (FactProcessor.ANIMAL_EAT_FACT.equals(outcome.getIntent())) {
 				List<Entity> entities = outcome.getEntities().getFood();
-				String animalStr = prepare(outcome, factId, entities);
+				String animalStr = validateAndGetAnimal(outcome, factId, entities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -103,7 +77,7 @@ public class AddFactProcess{
 			}
 			else if (FactProcessor.ANIMAL_LEG_FACT.equals(outcome.getIntent())) {
 				List<Entity> legCountEntities = outcome.getEntities().getNumber();
-				String animalStr = prepare(outcome, factId, legCountEntities);
+				String animalStr = validateAndGetAnimal(outcome, factId, legCountEntities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -120,7 +94,7 @@ public class AddFactProcess{
 			}
 			else if (FactProcessor.ANIMAL_FUR_FACT.equals(outcome.getIntent())) {
 				List<Entity> furEntities = outcome.getEntities().getFur();
-				String animalStr = prepare(outcome, factId, furEntities);
+				String animalStr = validateAndGetAnimal(outcome, factId, furEntities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -133,7 +107,7 @@ public class AddFactProcess{
 			}
 			else if (FactProcessor.ANIMAL_SCALES_FACT.equals(outcome.getIntent())) {
 				List<Entity> entities = outcome.getEntities().getScales();
-				String animalStr = prepare(outcome, factId, entities);
+				String animalStr = validateAndGetAnimal(outcome, factId, entities);
 				if (animalStr == null) {
 					return factId;
 				}
@@ -146,7 +120,7 @@ public class AddFactProcess{
 			}
 			else if (FactProcessor.ANIMAL_SPECIES_FACT.equals(outcome.getIntent())) {
 				List<Entity> entities = outcome.getEntities().getSpecies();
-				String animalStr = prepare(outcome, factId, entities);
+				String animalStr = validateAndGetAnimal(outcome, factId, entities);
 				if (animalStr == null) {
 					return factId;
 				}
